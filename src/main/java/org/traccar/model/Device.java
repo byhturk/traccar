@@ -163,7 +163,7 @@ public class Device extends GroupedModel implements Disableable, Schedulable {
     private boolean motionStreak;
 
     @QueryIgnore
-    @JsonIgnore
+    //@JsonIgnore
     public boolean getMotionStreak() {
         return motionStreak;
     }
@@ -176,7 +176,7 @@ public class Device extends GroupedModel implements Disableable, Schedulable {
     private boolean motionState;
 
     @QueryIgnore
-    @JsonIgnore
+    //@JsonIgnore
     public boolean getMotionState() {
         return motionState;
     }
@@ -189,7 +189,7 @@ public class Device extends GroupedModel implements Disableable, Schedulable {
     private Date motionTime;
 
     @QueryIgnore
-    @JsonIgnore
+    //@JsonIgnore
     public Date getMotionTime() {
         return motionTime;
     }
@@ -202,7 +202,7 @@ public class Device extends GroupedModel implements Disableable, Schedulable {
     private double motionDistance;
 
     @QueryIgnore
-    @JsonIgnore
+    //@JsonIgnore
     public double getMotionDistance() {
         return motionDistance;
     }
@@ -215,7 +215,7 @@ public class Device extends GroupedModel implements Disableable, Schedulable {
     private boolean overspeedState;
 
     @QueryIgnore
-    @JsonIgnore
+    //@JsonIgnore
     public boolean getOverspeedState() {
         return overspeedState;
     }
@@ -228,7 +228,7 @@ public class Device extends GroupedModel implements Disableable, Schedulable {
     private Date overspeedTime;
 
     @QueryIgnore
-    @JsonIgnore
+    //@JsonIgnore//
     public Date getOverspeedTime() {
         return overspeedTime;
     }
@@ -241,7 +241,7 @@ public class Device extends GroupedModel implements Disableable, Schedulable {
     private long overspeedGeofenceId;
 
     @QueryIgnore
-    @JsonIgnore
+    //@JsonIgnore//
     public long getOverspeedGeofenceId() {
         return overspeedGeofenceId;
     }
