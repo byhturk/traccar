@@ -26,27 +26,59 @@ import org.traccar.notification.MessageException;
 import org.traccar.notification.NotificationFormatter;
 import org.traccar.notification.NotificationMessage;
 import org.traccar.sms.SmsManager;
+import org.traccar.storage.Storage;
+import org.traccar.storage.StorageException;
+import org.traccar.storage.query.Condition;
+import org.traccar.storage.query.Request;
+import org.traccar.storage.query.Columns;
+
 
 @Singleton
 public class NotificatorSms extends Notificator {
 
     private final SmsManager smsManager;
     private final StatisticsManager statisticsManager;
+    private final Storage storage;
 
     @Inject
     public NotificatorSms(
-            SmsManager smsManager, NotificationFormatter notificationFormatter, StatisticsManager statisticsManager) {
+            SmsManager smsManager, NotificationFormatter notificationFormatter, StatisticsManager statisticsManager, Storage storage) {
         super(notificationFormatter, "short");
         this.smsManager = smsManager;
         this.statisticsManager = statisticsManager;
+        this.storage = storage;
+
     }
 
     @Override
     public void send(User user, NotificationMessage message, Event event, Position position) throws MessageException {
         if (user.getPhone() != null) {
-            statisticsManager.registerSms();
-            smsManager.sendMessage(user.getPhone(), message.getBody(), false);
+            // SMS limit kontrolü
+            if (user.hasAttribute("smsLimit")) {
+                int smsLimit = user.getInteger("smsLimit");
+                if (smsLimit > 0) {
+                    statisticsManager.registerSms();
+                    smsManager.sendMessage(user.getPhone(), message.getBody(), false);
+
+                   // SMS limitini güncelleme
+                   try {
+                    user.set("smsLimit", smsLimit - 1);
+
+                    // Güncellenmiş kullanıcıyı veritabanına kaydet
+                    storage.updateObject(user, new Request(
+                            new Columns.Include("attributes"), // attributes içinde güncelleme yapıyoruz
+                            new Condition.Equals("id", user.getId())));
+                } catch (StorageException e) {
+                    throw new MessageException("Hata Oluştu - Error updating SMS limit: " + e.getMessage());
+                }
+            } else {
+                
+                throw new MessageException("SMS Limit Yetersiz - SMS limit exceeded");
+            }
+        } else {
+            throw new MessageException("SMS Aktif Değil - SMS limit attribute not found");
         }
+    }
     }
 
 }
