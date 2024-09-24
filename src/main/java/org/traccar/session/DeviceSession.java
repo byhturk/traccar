@@ -94,4 +94,39 @@ public class DeviceSession {
         return (T) locals.get(key);
     }
 
+    //takipon konum filtre bayrağı
+    private boolean skipFirstLocation = false;
+
+    public boolean shouldSkipFirstLocation() {
+        return skipFirstLocation;
+    }
+
+    public void setSkipFirstLocation(boolean skipFirstLocation) {
+        this.skipFirstLocation = skipFirstLocation;
+    }
+
+    //takipon ilk giriş kaydı sessionda tutma
+
+    private boolean loginMessageReceived = false;
+
+    public boolean isLoginMessageReceived() {
+        return loginMessageReceived;
+    }
+
+    public void setLoginMessageReceived(boolean loginMessageReceived) {
+        this.loginMessageReceived = loginMessageReceived;
+    }
+
+    //takipon sınıfa eski kontak durum bilgisini saklayacak bir alan ekledik
+
+    private boolean previousIgnition = false;
+
+    public boolean getPreviousIgnition() {
+        return previousIgnition;
+    }
+
+    public void setPreviousIgnition(boolean previousIgnition) {
+        this.previousIgnition = previousIgnition;
+    }
+       
 }
