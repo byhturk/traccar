@@ -16,6 +16,9 @@
 package org.traccar.api.resource;
 
 import jakarta.ws.rs.FormParam;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.traccar.api.BaseObjectResource;
 import org.traccar.api.signature.TokenManager;
 import org.traccar.broadcast.BroadcastService;
@@ -64,6 +67,7 @@ public class DeviceResource extends BaseObjectResource<Device> {
 
     private static final int DEFAULT_BUFFER_SIZE = 8192;
     private static final int IMAGE_SIZE_LIMIT = 500000;
+    private static final Logger LOGGER = LoggerFactory.getLogger(DeviceResource.class);
 
     @Inject
     private Config config;
@@ -261,7 +265,9 @@ public class DeviceResource extends BaseObjectResource<Device> {
 
             storage.addPermission(new Permission(User.class, share.getId(), Device.class, deviceId));
         }
-
+          //takipon Link Paylaş işlemini günlüklere logla
+          LOGGER.info("User: {}, Action: Shared Link Created, Description:{}, DeviceId:{}",
+                getUserId(), shareEmail, device.getName());
         return tokenManager.generateToken(share.getId(), expiration);
     }
 
