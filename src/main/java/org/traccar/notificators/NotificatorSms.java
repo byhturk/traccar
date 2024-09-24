@@ -56,13 +56,18 @@ public class NotificatorSms extends Notificator {
             // SMS limit kontrolü
             if (user.hasAttribute("smsLimit")) {
                 int smsLimit = user.getInteger("smsLimit");
-                if (smsLimit > 0) {
+                // Mesajın uzunluğunu kontrol et
+                int messageLength = message.getBody().length();
+                // 150 karakter için 1 SMS hesapla
+                int smsNeeded = (int) Math.ceil(messageLength / 150.0);
+                
+                if (smsLimit > smsNeeded) {
                     statisticsManager.registerSms();
                     smsManager.sendMessage(user.getPhone(), message.getBody(), false);
 
                    // SMS limitini güncelleme
                    try {
-                    user.set("smsLimit", smsLimit - 1);
+                    user.set("smsLimit", smsLimit - smsNeeded);
 
                     // Güncellenmiş kullanıcıyı veritabanına kaydet
                     storage.updateObject(user, new Request(
