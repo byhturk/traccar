@@ -94,6 +94,8 @@ public class SessionResource extends BaseResource {
             if (user != null) {
                 return user;
             }
+            //takipon giriş loglaması yapıldı
+            LogAction.logSocketLogin(userId, WebHelper.retrieveRemoteAddress(request));
         }
 
         throw new WebApplicationException(Response.status(Response.Status.NOT_FOUND).build());
