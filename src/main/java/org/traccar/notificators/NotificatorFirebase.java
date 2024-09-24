@@ -82,6 +82,14 @@ public class NotificatorFirebase extends Notificator {
     @Override
     public void send(User user, NotificationMessage message, Event event, Position position) throws MessageException {
         if (user.hasAttribute("notificationTokens")) {
+            
+            //takipon ios sesleri
+            String iosSound = "default";
+            if (user.hasAttribute("notificationSound")) {
+                String notificationSound = user.getString("notificationSound");
+                iosSound = notificationSound + ".caf";
+            }
+
 
             List<String> registrationTokens = new ArrayList<>(
                     Arrays.asList(user.getString("notificationTokens").split("[, ]")));
@@ -98,7 +106,7 @@ public class NotificatorFirebase extends Notificator {
                             .build())
                     .setApnsConfig(ApnsConfig.builder()
                             .setAps(Aps.builder()
-                                    .setSound("default")
+                                    .setSound(iosSound)
                                     .build())
                             .build())
                     .addAllTokens(registrationTokens);
