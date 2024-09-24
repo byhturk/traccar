@@ -42,6 +42,7 @@ public final class LogAction {
 
     private static final String ACTION_LOGIN = "login";
     private static final String ACTION_LOGOUT = "logout";
+    private static final String ACTION_SOCKET = "connected";
 
     private static final String ACTION_ACCUMULATORS = "accumulators";
     private static final String ACTION_COMMAND = "command";
@@ -132,5 +133,20 @@ public final class LogAction {
         }
         LOGGER.info(String.format(PATTERN_LOGIN, userId, action, remoteAddress));
     }
+
+    //takipon user giriş loglama
+    public static void logSocketLogin(long userId, String remoteAddress) {
+        logSocketLogin(ACTION_SOCKET, userId, remoteAddress);
+    }
+
+    private static void logSocketLogin(String action, long userId, String remoteAddress) {
+        if (remoteAddress == null || remoteAddress.isEmpty()) {
+            remoteAddress = "unknown";
+        }
+        LOGGER.info(String.format(PATTERN_LOGIN, userId, action, remoteAddress));
+    }
+
+
+
 
 }

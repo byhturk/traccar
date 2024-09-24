@@ -21,6 +21,7 @@ import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.api.WebSocketAdapter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.traccar.helper.LogAction;
 import org.traccar.helper.model.PositionUtil;
 import org.traccar.model.Device;
 import org.traccar.model.Event;
@@ -67,6 +68,16 @@ public class AsyncSocket extends WebSocketAdapter implements ConnectionManager.U
             data.put(KEY_POSITIONS, PositionUtil.getLatestPositions(storage, userId));
             sendData(data);
             connectionManager.addListener(userId, this);
+
+            //takipon kullanıcı giriş loglama
+            // Kullanıcının uzak adresini al
+            List<String> forwardedForHeaders = session.getUpgradeRequest().getHeaders().get("X-Forwarded-For");
+            String remoteAddress = (forwardedForHeaders != null && !forwardedForHeaders.isEmpty())
+                    ? forwardedForHeaders.get(0)
+                    : session.getRemoteAddress().toString();
+            // Loglama metoduna uzak adresi geç
+            LogAction.logSocketLogin(userId, remoteAddress);
+
         } catch (StorageException e) {
             throw new RuntimeException(e);
         }
