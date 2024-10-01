@@ -39,12 +39,14 @@ import org.traccar.storage.query.Condition;
 import org.traccar.storage.query.Request;
 
 import jakarta.inject.Inject;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.QueryParam;
+import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import java.lang.reflect.Field;
@@ -81,6 +83,19 @@ public class CommandResource extends ExtendedObjectResource<Command> {
             return null;
         }
     }
+        //http request ekledik ip almak için
+    @Context
+    private HttpServletRequest request;
+
+    //http kullanıcı IP al
+    private String getUserIp() {
+        // Kullanıcı IP'sini al
+        String forwardedForHeader = request.getHeader("X-Forwarded-For");
+        return (forwardedForHeader != null && !forwardedForHeader.isEmpty())
+                ? forwardedForHeader
+                : request.getRemoteAddr();
+    }
+
 
     @GET
     @Path("send")
@@ -143,6 +158,9 @@ public class CommandResource extends ExtendedObjectResource<Command> {
         }
 
         LogAction.command(getUserId(), groupId, entity.getDeviceId(), entity.getType());
+        //loggeri buraya taşı bu formatta, IP ile birlikte loglama
+        LOGGER.info("Command sent successfully: UserId={}, Type={}, Description={}, Attributes={}, DeviceId={}, UserIp={}",
+        getUserId(), entity.getType(), entity.getDescription(), entity.getAttributes(), entity.getDeviceId(), getUserIp());
         return Response.ok(entity).build();
     }
 
