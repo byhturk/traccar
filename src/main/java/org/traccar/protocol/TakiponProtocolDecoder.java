@@ -9,27 +9,27 @@ import io.netty.buffer.Unpooled;
 import io.netty.channel.Channel;
 import org.traccar.BaseProtocolDecoder;
 import org.traccar.session.DeviceSession;
+
 import org.traccar.NetworkMessage;
 import org.traccar.Protocol;
 import org.traccar.helper.BitUtil;
 import org.traccar.helper.Checksum;
 import org.traccar.helper.DateBuilder;
 import org.traccar.helper.UnitsConverter;
+import java.util.concurrent.TimeUnit;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.traccar.model.CellTower;
 import org.traccar.model.Network;
 import org.traccar.model.Position;
 
 import java.net.SocketAddress;
 import java.nio.charset.StandardCharsets;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.TimeZone;
-
-import java.util.concurrent.TimeUnit;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
 
 public class TakiponProtocolDecoder extends BaseProtocolDecoder {
 
@@ -247,47 +247,68 @@ public class TakiponProtocolDecoder extends BaseProtocolDecoder {
         
         switch (BitUtil.between(status, 3, 6)) {
             case 1:
-                position.addAlarm(Position.ALARM_VIBRATION);
+                position.set(Position.KEY_ALARM, Position.ALARM_VIBRATION);
                 break;
             case 2:
-                position.addAlarm(Position.ALARM_POWER_CUT);
+                position.set(Position.KEY_ALARM, Position.ALARM_POWER_CUT);
                 break;
             case 3:
-                position.addAlarm(Position.ALARM_LOW_BATTERY);
+                position.set(Position.KEY_ALARM, Position.ALARM_LOW_BATTERY);
                 break;
             case 4:
-                position.addAlarm(Position.ALARM_SOS);
+                position.set(Position.KEY_ALARM, Position.ALARM_SOS);
                 break;
             default:
                 break;
         }
 
     }
+
     private String decodeAlarm(short value) {
-        return switch (value) {
-            case 0x01 -> Position.ALARM_SOS;
-            case 0x02 -> Position.ALARM_POWER_CUT;
-            case 0x03, 0x09 -> Position.ALARM_VIBRATION;
-            case 0x04 -> Position.ALARM_GEOFENCE_ENTER;
-            case 0x05 -> Position.ALARM_GEOFENCE_EXIT;
-            case 0x06 -> Position.ALARM_OVERSPEED;
-            case 0x19 -> Position.ALARM_LOW_BATTERY;
-            case 0x11 -> Position.ALARM_POWER_OFF;
-            case 0x0C -> Position.KEY_POWER;
-            case 0x13, 0x25 -> Position.ALARM_TAMPERING;
-            case 0x14 -> Position.ALARM_DOOR;
-            case 0x18 -> Position.ALARM_REMOVING;
-            case 0x1B, 0x2A, 0x2B, 0x2E -> Position.ALARM_CORNERING;
-            case 0x23 -> Position.ALARM_FALL_DOWN;
-            case 0x26 -> Position.ALARM_ACCELERATION;
-            case 0x27 -> Position.ALARM_BRAKING;
-            case 0x28 -> Position.ALARM_CORNERING;
-            case 0x29 -> Position.ALARM_ACCIDENT;
-            case 0x30 -> Position.ALARM_JAMMING;
-            default -> null;
-        };
+        switch (value) {
+            case 0x01:
+                return Position.ALARM_SOS;
+            case 0x02:
+                return Position.ALARM_POWER_CUT;
+            case 0x03:
+            case 0x09:
+                return Position.ALARM_VIBRATION;
+            case 0x04:
+                return Position.ALARM_GEOFENCE_ENTER;
+            case 0x05:
+                return Position.ALARM_GEOFENCE_EXIT;
+            case 0x06:
+                return Position.ALARM_OVERSPEED;
+            case 0x0E:
+            case 0x0F:
+            case 0x19:
+                return Position.ALARM_LOW_BATTERY;
+            case 0x11:
+                return Position.ALARM_POWER_OFF;
+            case 0x0C:
+                return Position.KEY_POWER;
+            case 0x13:
+            case 0x25:
+                return Position.ALARM_TAMPERING;
+            case 0x14:
+                return Position.ALARM_DOOR;
+            case 0x18:
+                return Position.ALARM_REMOVING;
+            case 0x23:
+                return Position.ALARM_FALL_DOWN;
+            case 0x26:
+                return Position.ALARM_ACCELERATION;
+            case 0x27:
+                return Position.ALARM_BRAKING;
+            case 0x2A:
+            case 0x28:
+                return Position.ALARM_CORNERING;
+            case 0x29:
+                return Position.ALARM_ACCIDENT;
+            default:
+                return null;
+        }
     }
-        
 
     private Object decodeBasic(Channel channel, SocketAddress remoteAddress, ByteBuf buf) {
 
@@ -423,7 +444,7 @@ public class TakiponProtocolDecoder extends BaseProtocolDecoder {
                 position.set(Position.KEY_BATTERY_LEVEL, buf.readUnsignedByte() * 100 / 6);
                 position.set(Position.KEY_RSSI, buf.readUnsignedByte());
                 if (type == MSG_ALARM_STATUS) {//ALARM PAKETİ İSE ALARM DEĞERİ DÖNDÜR
-                    position.addAlarm(decodeAlarm(buf.readUnsignedByte())); //yenilendi alarm
+                    position.set(Position.KEY_ALARM, decodeAlarm(buf.readUnsignedByte())); 
                 } else {//HBT PAKETİYSE  VOLTAJ DEĞERİ DÖNDÜR
                     int hexValue = buf.readUnsignedByte(); // Okunan hexadecimal değeri alın Takipon
                     double decimalValue = hexValue; // Hexadecimal değeri decimal'e çevirin takipon
@@ -495,7 +516,7 @@ public class TakiponProtocolDecoder extends BaseProtocolDecoder {
                     decodeStatus(position, buf);
                     position.set(Position.KEY_POWER, buf.readUnsignedShort() * 0.01);
                     position.set(Position.KEY_RSSI, buf.readUnsignedByte());
-                    position.addAlarm(decodeAlarm(buf.readUnsignedByte()));
+                    position.set(Position.KEY_ALARM, decodeAlarm(buf.readUnsignedByte()));
                     position.set("oil", buf.readUnsignedShort());
                     int temperature = buf.readUnsignedByte();
                     if (BitUtil.check(temperature, 7)) {
@@ -507,7 +528,7 @@ public class TakiponProtocolDecoder extends BaseProtocolDecoder {
                     position.set(Position.KEY_ODOMETER, buf.readUnsignedInt());
                     position.set(Position.KEY_CARD, buf.readCharSequence(
                             buf.readUnsignedByte(), StandardCharsets.US_ASCII).toString());
-                    position.addAlarm(buf.readUnsignedByte() > 0 ? Position.ALARM_GENERAL : null);
+                    position.set(Position.KEY_ALARM, buf.readUnsignedByte() > 0 ? Position.ALARM_GENERAL : null);
                     position.set("cardStatus", buf.readUnsignedByte());
                     position.set(Position.KEY_DRIVING_TIME, buf.readUnsignedShort());
                 }
