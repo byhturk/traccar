@@ -3,10 +3,10 @@
   "info": {
     "title": "Traccar",
     "version": "6.5",
-    "description": "Traccar GPS tracking server API documentation. To use the API you need to have a server instance. For testing purposes you can use one of free [demo servers](https://www.traccar.org/demo-server/). For production use you can install your own server or get a [subscription service](https://www.traccar.org/product/tracking-server/).",
+    "description": "TakipOn Tracking Systems https://www.takipon.com).",
     "contact": {
-      "name": "Traccar Support",
-      "url": "https://www.traccar.org/",
+      "name": "TakipOn Support",
+      "url": "https://www.takipon.org/",
       "email": "support@traccar.org"
     },
     "license": {
@@ -16,24 +16,12 @@
   },
   "servers": [
     {
-      "url": "https://demo.traccar.org/api",
+      "url": "https://s1.takipon.org/api",
       "description": "Demo Server 1"
     },
     {
-      "url": "https://demo2.traccar.org/api",
+      "url": "https://test.traccar.org/api",
       "description": "Demo Server 2"
-    },
-    {
-      "url": "https://demo3.traccar.org/api",
-      "description": "Demo Server 3"
-    },
-    {
-      "url": "https://demo4.traccar.org/api",
-      "description": "Demo Server 4"
-    },
-    {
-      "url": "https://server.traccar.org/api",
-      "description": "Subscription Server"
     },
     {
       "url": "http://{host}:{port}/api",
