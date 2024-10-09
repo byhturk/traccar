@@ -258,13 +258,15 @@ public class PortConfigSuffix extends ConfigSuffix<Integer> {
         PORTS.put("transync", 5247);
         PORTS.put("t622iridium", 5248);
         PORTS.put("pui", 5249);
-        PORTS.put("nto", 5250);
+        PORTS.put("nto", 5299);
         PORTS.put("ramac", 5251);
         PORTS.put("positrex", 5252);
         PORTS.put("dragino", 5253);
         PORTS.put("fleetguide", 5254);
         PORTS.put("valtrack", 5255);
         PORTS.put("snapper", 5256);
+        PORTS.put("takipon", 5250);
+
     }
 
     PortConfigSuffix(String key, List<KeyType> types) {
