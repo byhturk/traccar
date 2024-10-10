@@ -6,8 +6,8 @@
     "description": "TakipOn Tracking Systems https://www.takipon.com).",
     "contact": {
       "name": "TakipOn Support",
-      "url": "https://www.takipon.org/",
-      "email": "support@traccar.org"
+      "url": "https://www.takipon.com/",
+      "email": "info@takipon.com"
     },
     "license": {
       "name": "Apache 2.0",
@@ -16,11 +16,11 @@
   },
   "servers": [
     {
-      "url": "https://s1.takipon.org/api",
+      "url": "https://s1.takipon.com/api",
       "description": "Demo Server 1"
     },
     {
-      "url": "https://test.traccar.org/api",
+      "url": "https://test.takipon.com/api",
       "description": "Demo Server 2"
     },
     {

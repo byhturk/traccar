@@ -84,7 +84,7 @@ public class MainEventHandler extends ChannelInboundHandlerAdapter {
     @Override
     public void userEventTriggered(ChannelHandlerContext ctx, Object evt) {
         if (evt instanceof IdleStateEvent) {
-            LOGGER.info("[{}] timed out", NetworkUtil.session(ctx.channel()));
+            LOGGER.debug("[{}] timed out", NetworkUtil.session(ctx.channel()));
             closeChannel(ctx.channel());
         }
     }
