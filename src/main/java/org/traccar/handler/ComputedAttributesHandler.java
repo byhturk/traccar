@@ -177,7 +177,7 @@ public class ComputedAttributesHandler extends BasePositionHandler {
                         position.getAttributes().remove(attribute.getAttribute());
                     }
                 } catch (JexlException error) {
-                    LOGGER.warn("Attribute computation error", error);
+                    LOGGER.debug("Attribute computation error", error);
                 } catch (ClassCastException error) {
                     LOGGER.warn("Attribute cast error", error);
                 }
