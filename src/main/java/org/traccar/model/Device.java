@@ -168,7 +168,7 @@ public class Device extends GroupedModel implements Disableable, Schedulable {
         return motionStreak;
     }
 
-    @JsonIgnore
+    //@JsonIgnore
     public void setMotionStreak(boolean motionStreak) {
         this.motionStreak = motionStreak;
     }
@@ -181,7 +181,7 @@ public class Device extends GroupedModel implements Disableable, Schedulable {
         return motionState;
     }
 
-    @JsonIgnore
+    //@JsonIgnore
     public void setMotionState(boolean motionState) {
         this.motionState = motionState;
     }
